@@ -1,28 +1,28 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+import logger from 'redux-logger';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
-}
+import CounterContainer from './components/counter/CounterContainer';
+import rootReducer from './reducers';
+
+const myOwnlogger = () => next => (action) => {
+  next(action);
+};
+const storeWithMiddleware = compose(
+  applyMiddleware(logger, myOwnlogger),
+  window.__REDUX_DEVTOOLS_EXTENSION__
+  && window.__REDUX_DEVTOOLS_EXTENSION__(),
+);
+
+const store = createStore(rootReducer, storeWithMiddleware);
+const App = () => (
+  <Provider store={store}>
+    <div className="App">
+      <CounterContainer />
+    </div>
+  </Provider>
+);
 
 export default App;
